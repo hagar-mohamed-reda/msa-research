@@ -34,6 +34,8 @@ class User  extends Authenticatable
         'active',
         'phone',
         'password',
+        'username',
+        'email',
         'level_id',
         'type',
         'set_number',
@@ -44,13 +46,15 @@ class User  extends Authenticatable
         'graduated',
         'can_see_result'
     ];
+     
 
     public function notifications() {
         return $this->hasMany("App\Notification", "user_id");
     }
 
-    public function toDoctor() {
-        return Doctor::find($this->id);
+    public function toDoctor() { 
+        $resource = Doctor::find($this->fid);
+        return $resource? $resource : $this;
     }
     
     public function loginHistories() {
@@ -58,19 +62,34 @@ class User  extends Authenticatable
     }
 
     public function toStudent() {
-        return Student::find($this->id);
+        $resource = Student::find($this->fid);
+        return $resource? $resource : $this;
     }
 
     public static function students() {
-        return User::where('type', 'student');
+        return Student::query();
+        //return User::where('type', 'student');
     }
 
     public static function doctors() {
-        return User::where('type', 'doctor');
+        return Doctor::query();
+        //return User::where('type', 'doctor');
     }
 
     public static function admins() {
         return User::where('type', 'admin');
+    }
+    
+    public function researchs() {
+        return Research::all();
+    }
+    
+    public function courses() {
+        return Course::all();
+    }
+    
+    public function studentResearchs() {
+        return StudentResearch::all();
     }
 
 

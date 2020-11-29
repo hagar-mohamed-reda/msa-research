@@ -15,7 +15,9 @@
     <thead>
         <tr>
             @foreach($builder->cols as $col)
+            @if ($col['name'] != 'password')
             <th>{{ $col['label'] }}</th>
+            @endif
             @endforeach
             <th></th>
         </tr>
@@ -77,7 +79,9 @@ $(document).ready(function() {
         "ajax": "{{ url('/dashboard/doctor/data') }}",
         "columns":[
             @foreach($builder->cols as $col)
+            @if ($col['name'] != 'password')
             { "data": "{{ $col['name'] }}" },
+            @endif
             @endforeach
             { "data": "action" }
         ]

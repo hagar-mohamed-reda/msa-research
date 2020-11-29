@@ -20,7 +20,9 @@
     <thead>
         <tr>
             @foreach($builder->cols as $col)
+            @if ($col['name'] != 'password')
             <th>{{ $col['label'] }}</th>
+            @endif
             @endforeach
             <th>{{ __('register courses') }}</th>
             <th></th>
@@ -290,7 +292,9 @@ $(document).ready(function() {
         "ajax": "{{ url('/dashboard/student/data') }}",
         "columns":[
             @foreach($builder->cols as $col)
+            @if ($col['name'] != 'password')
             { "data": "{{ $col['name'] }}" },
+            @endif
             @endforeach
             { "data": "courses" },
             { "data": "action" }

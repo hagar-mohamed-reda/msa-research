@@ -9,8 +9,7 @@ use \Illuminate\Database\Eloquent\SoftDeletes;
 use App\helper\ViewBuilder;
  
 class Level extends Model
-{
-    use SoftDeletes;
+{ 
 
     protected $table = "levels";
 

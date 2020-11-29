@@ -17,7 +17,7 @@ class Student extends Model
      *
      * @var type
      */
-    protected $table = "users";
+    protected $table = "students";
 
     /**
      * The attributes that are mass assignable.
@@ -32,7 +32,10 @@ class Student extends Model
         'sms_code',
         'active',
         'phone',
+        'username',
+        'email',
         'password',
+        'national_id',
         'level_id',
         'type',
         'account_confirm',
@@ -40,6 +43,14 @@ class Student extends Model
         'graduated',
         'can_see_result'
     ];
+    
+    public function user() {
+        return $this->hasOne("App\User", "fid");
+    }
+
+    public function toStudent() {
+        return $this;
+    }
     
     public function grades() {
         return $this->hasMany('App\StudentGrade', 'student_id');

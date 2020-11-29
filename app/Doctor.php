@@ -16,7 +16,7 @@ class Doctor extends Model
      *
      * @var type
      */
-    protected $table = "users";
+    protected $table = "doctors";
 
     /**
      * The attributes that are mass assignable.
@@ -26,15 +26,25 @@ class Doctor extends Model
     protected $fillable = [
         'id', 
         'name',
+        'username',
         'sms_code',
         'active',
         'phone',
+        'email',
         'password',
         'confirm_account' 
     ];
+    
+    public function user() {
+        return $this->hasOne("App\User", "fid");
+    }
 
     public function courses() {
         return Course::whereIn('id', DoctorCourse::where('doctor_id', $this->id)->pluck('course_id')->toArray());
+    }
+    
+    public function toDoctor() {
+        return $this;
     }
     
     public function researchs() {

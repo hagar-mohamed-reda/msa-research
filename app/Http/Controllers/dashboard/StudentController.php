@@ -7,14 +7,14 @@ use App\Http\Controllers\Controller;
 
 use App\helper\Message;
 
-use App\imports\UserImporter;
-use App\imports\EditUserImporter;
-use App\imports\EditNationalIdUser;
-use App\imports\EditGraduatedUser;
+use App\imports\StudentImporter;
+use App\imports\EditStudentImporter;
+use App\imports\EditNationalIdStudent;
+use App\imports\EditGraduatedStudent;
 
 use App\helper\Helper;
-use App\User;
 use App\Student;
+use App\User;
 use App\Course;
 use App\StudentCourse;
 use DB;
@@ -37,7 +37,7 @@ class StudentController extends Controller
      * return json data
      */
     public function getData() {
-        $query = User::where('type', 'student');
+        $query = Student::query();
         
         if (request()->level_id > 0) {
             $query->where('level_id', request()->level_id);
@@ -53,22 +53,22 @@ class StudentController extends Controller
         }
         
         return DataTables::eloquent($query)
-                        ->addColumn('action', function(User $student) {
+                        ->addColumn('action', function(Student $student) {
                             return view("dashboard.student.action", compact("student"));
                         })
-                        ->addColumn('level_id', function(User $student) {
+                        ->addColumn('level_id', function(Student $student) {
                             return optional($student->toStudent()->level)->name;
                         })
-                        ->addColumn('department_id', function(User $student) {
+                        ->addColumn('department_id', function(Student $student) {
                             return optional($student->toStudent()->department)->name;
                         })
-                        ->addColumn('courses', function(User $student) {
+                        ->addColumn('courses', function(Student $student) {
                             return StudentCourse::where('student_id', $student->id)->count();
                         })
-                        ->editColumn('account_confirm', function(User $student) {
+                        ->editColumn('account_confirm', function(Student $student) {
                             return $student->account_confirm == 1? __('yes') : __('no');
                         })
-                        ->editColumn('graduated', function(User $student) {
+                        ->editColumn('graduated', function(Student $student) {
                             return $student->graduated == 1? __('yes') : __('no');
                         })
                         ->rawColumns(['action'])
@@ -83,14 +83,14 @@ class StudentController extends Controller
         
         //return $course;
         
-        return DataTables::eloquent(User::where('type', 'student'))
-                        ->addColumn('action', function(User $student) {
+        return DataTables::eloquent(Student::query())
+                        ->addColumn('action', function(Student $student) {
                             return view("dashboard.course.student", compact("student"));
                         })  
-                        ->addColumn('level', function(User $student) {
+                        ->addColumn('level', function(Student $student) {
                             return optional($student->toStudent()->level)->name;
                         })
-                        ->addColumn('department', function(User $student) {
+                        ->addColumn('department', function(Student $student) {
                             return optional($student->toStudent()->department)->name;
                         })
                         ->rawColumns(['action'])
@@ -131,21 +131,34 @@ class StudentController extends Controller
         }
         
         if ($request->national_id) {
-            if (User::where('national_id', $request->national_id)->first()) {
+            if (Student::where('national_id', $request->national_id)->first()) {
                 return Message::error(__('national id already exist'));
             }
         }
         
         try {
-            $data = $request->all();
-            $data['type'] = 'student';
-            $student = User::create($data);
+            $data = $request->all(); 
+            $data['password'] = bcrypt($request->password);
+            $data['username'] = $request->phone;
+            $data['email'] = $request->phone;
+            $student = Student::create($data);
 
+            // user of student
+            User::create([
+                "name" => $request->name,
+                "phone" => $request->phone,
+                "username" => $request->phone,
+                "email" => $request->phone,
+                "password" => bcrypt($request->password),
+                "active" => $request->active,
+                "type" => "student",
+                "fid" => $student->id,
+            ]);
             notify(__('add student'), __('add student') . " " . $student->name, 'fa fa-user');
 
             return Message::success(Message::$DONE);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 
@@ -155,7 +168,7 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $student) {
+    public function show(Student $student) {
         return view("dashboard.student.show", compact("student"));
     }
 
@@ -167,16 +180,16 @@ class StudentController extends Controller
      */
     public function import(Request $request) {
         if ($request->type == 'edit')
-            Excel::import(new EditUserImporter, $request->file('users'));
+            Excel::import(new EditStudentImporter, $request->file('users'));
             
         else if ($request->type == 'new')
-            Excel::import(new UserImporter, $request->file('users'));
+            Excel::import(new StudentImporter, $request->file('users'));
             
         else if ($request->type == 'edit_national_id')
-            Excel::import(new EditNationalIdUser, $request->file('users'));
+            Excel::import(new EditNationalIdStudent, $request->file('users'));
         
         else if ($request->type == 'edit_graduated')
-            Excel::import(new EditGraduatedUser, $request->file('users'));
+            Excel::import(new EditGraduatedStudent, $request->file('users'));
         
         return Message::success(Message::$DONE);
     }
@@ -199,19 +212,37 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $student)
+    public function update(Request $request, Student $student)
     {
         
-        if ($request->national_id && $student->national_id != $request->national_id) {
-            if (User::where('national_id', $request->national_id)->first()) {
-                return Message::error(__('national id already exist'));
-            }
+        $validator = validator()->make($request->all(), [
+            'phone' => 'required|unique:students,phone,'.$student->id,
+            'national_id' => 'required|unique:students,national_id,'.$student->id,
+            'password' => 'required',
+        ], [
+            "phone.required" => __("phone_required"),
+            "phone.unique" => __("phone already exist"),
+            "national_id.unique" => __('national id already exist'),
+            "password.required" => __("password_required"),
+        ]);
+
+        if ($validator->fails()) {
+            $key = $validator->errors()->first(); 
+            return Message::error($key);
         }
-        
+          
         
         try {
-            $student->update($request->all());
-
+            $data = $request->all();
+            $data['username'] = $request->phone;
+            $data['email'] = $request->phone;
+            if ($request->password != $student->password)
+                $data['password'] = bcrypt($request->password);
+            
+            $student->update($data); 
+            // update user of doctor 
+            optional($student->user)->update($data);
+            
             notify(__('edit student'), __('edit student') . " " . $student->name, "fa fa-user");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {
@@ -225,14 +256,15 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $student)
+    public function destroy(Student $student)
     { 
         try {
             notify(__('remove student'), __('remove student') . " " . $student->name, "fa fa-user");
             $student->delete();
+            optional($student->user)->delete();
             return Message::success(Message::$REMOVE);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 }

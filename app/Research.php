@@ -63,7 +63,15 @@ class Research extends Model
         $courses = [
             [null, __("select course")]
         ];
-        foreach(Auth::user()->toDoctor()->courses()->get() as $item)
+        
+        $resources = [];
+        if (Auth::user()->toDoctor()) {
+            $resources = Auth::user()->toDoctor()->courses()->get();
+        } else {
+            $resources = Course::all();
+        }
+        
+        foreach($resources as $item)
             $courses[] = [$item->id, $item->name];
 
 

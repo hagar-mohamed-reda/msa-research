@@ -10,7 +10,7 @@ class Permission extends Model
     
     use SoftDeletes;
     
-    protected $table = "permissions";
+    protected $table = "research_permissions";
 
     protected $fillable = [
         'name' 

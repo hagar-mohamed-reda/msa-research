@@ -78,13 +78,16 @@ class AdminController extends Controller
         try {
             $data = $request->all();
             $data['type'] = 'admin';
+            $data['email'] = $data['phone'];
+            $data['password'] = bcrypt($request->password);
+            $data['username'] = $data['phone'];
             $admin = User::create($data);
 
             notify(__('add admin'), __('add admin') . " " . $admin->name, 'fa fa-user');
 
             return Message::success(Message::$DONE);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 
@@ -119,13 +122,17 @@ class AdminController extends Controller
      */
     public function update(Request $request, User $admin)
     {
-        try {
-            $admin->update($request->all());
+        try { 
+            $data = $request->all();
+            if ($request->password != $admin->password)
+                $data['password'] = bcrypt($request->password);
+            
+            $admin->update($data);
 
             notify(__('edit admin'), __('edit admin') . " " . $admin->name, "fa fa-user");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 

@@ -10,8 +10,7 @@ use App\helper\ViewBuilder;
 
 class Course extends Model
 {
-    
-    use SoftDeletes;
+     
 
     protected $table = "courses";
 

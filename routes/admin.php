@@ -12,6 +12,10 @@
  */
 //exit();
 
+// remote post login
+Route::get('/remote', 'Dashboard\StudentRemoteLoginController@login')->name('remoteLogin');
+
+
 //********************************************
 // dashboard routes
 //********************************************

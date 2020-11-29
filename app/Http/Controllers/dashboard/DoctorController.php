@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\helper\Message;
 use App\helper\Helper;
-use App\User;
-use App\Doctor;
+use App\Doctor; 
+use App\User; 
 use DB;
 use DataTables;
 
@@ -28,17 +28,17 @@ class DoctorController extends Controller
      * return json data
      */
     public function getData() {
-        return DataTables::eloquent(User::where('type', 'doctor'))
-                        ->addColumn('action', function(User $doctor) {
+        return DataTables::eloquent(Doctor::query())
+                        ->addColumn('action', function(Doctor $doctor) {
                             return view("dashboard.doctor.action", compact("doctor"));
                         })
-                        ->addColumn('level_id', function(User $doctor) {
+                        ->addColumn('level_id', function(Doctor $doctor) {
                             return optional($doctor->level)->name;
                         })
-                        ->addColumn('department_id', function(User $doctor) {
+                        ->addColumn('department_id', function(Doctor $doctor) {
                             return optional($doctor->department)->name;
                         })
-                        ->editColumn('account_confirm', function(User $doctor) {
+                        ->editColumn('account_confirm', function(Doctor $doctor) {
                             return $doctor->account_confirm == 1? __('yes') : __('no');
                         })
                         ->rawColumns(['action'])
@@ -65,7 +65,7 @@ class DoctorController extends Controller
     public function store(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone' => 'required|unique:users',
+            'phone' => 'required|unique:users,phone,'.$request->id,
             'password' => 'required',
         ], [
             "phone.required" => __("phone_required"),
@@ -79,15 +79,29 @@ class DoctorController extends Controller
             return Message::error($key);
         }
         try {
-            $data = $request->all();
-            $data['type'] = 'doctor';
-            $doctor = User::create($data);
+            $data = $request->all(); 
+            $data['password'] = bcrypt($request->password);
+            $data['username'] = $request->phone;
+            $data['email'] = $request->phone;
+            $doctor = Doctor::create($data);
+            
+            // user of doctor
+            User::create([
+                "name" => $request->name,
+                "phone" => $request->phone,
+                "username" => $request->phone,
+                "email" => $request->phone,
+                "password" => bcrypt($request->password),
+                "active" => $request->active,
+                "type" => "doctor",
+                "fid" => $doctor->id,
+            ]);
 
             notify(__('add doctor'), __('add doctor') . " " . $doctor->name, 'fa fa-user');
 
             return Message::success(Message::$DONE);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 
@@ -120,15 +134,37 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $doctor)
+    public function update(Request $request, Doctor $doctor)
     {
-        try {
-            $doctor->update($request->all());
+        $validator = validator()->make($request->all(), [
+            'phone' => 'required|unique:doctors,phone,'.$doctor->id,
+            'password' => 'required',
+        ], [
+            "phone.required" => __("phone_required"),
+            "phone.unique" => __("phone already exist"),
+            "password.required" => __("password_required"),
+        ]);
 
+        if ($validator->fails()) {
+            $key = $validator->errors()->first(); 
+            return Message::error($key);
+        }
+        try {
+            $data = $request->all();
+            $data['username'] = $request->phone;
+            $data['email'] = $request->phone;
+            if ($request->password != $doctor->password)
+                $data['password'] = bcrypt($request->password);
+            
+            $doctor->update($data); 
+            // update user of doctor 
+            optional($doctor->user)->update($data);
+            
+            
             notify(__('edit doctor'), __('edit doctor') . " " . $doctor->name, "fa fa-user");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 
@@ -138,11 +174,13 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $doctor)
+    public function destroy(Doctor $doctor)
     { 
         try {
             notify(__('remove doctor'), __('remove doctor') . " " . $doctor->name, "fa fa-user");
             $doctor->delete();
+            // remove user of doctor 
+            optional($doctor->user)->delete();
             return Message::success(Message::$REMOVE);
         } catch (\Exception $ex) {
             return Message::error(Message::$ERROR);

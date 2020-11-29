@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\dashboard;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -30,7 +31,7 @@ class LoginController extends Controller {
     /**
      * login
      */
-    public function login(Request $request) {
+    public function login(Request $request) { 
         $redirect = $request->type == 'student'? 'students/login' : 'dashboard/login';
         
         $validator = validator()->make($request->all(), [
@@ -49,12 +50,19 @@ class LoginController extends Controller {
         
         
         try {
-            $user = User::where("phone", $request->phone)
-            ->where("password", $request->password)
+            $user = User::query()
+            ->where("phone", $request->phone)
+            ->orWhere("username", $request->phone)
+            ->orWhere("email", $request->phone)
+            //  
             ->where('type', $request->type)
             ->first();
 
             if ($user) {
+                if (!Hash::check($request->password, $user->password)) {
+                    return redirect($redirect . "?status=0&msg=$error");
+                }
+                
                 if ($user->active == 0)
                     return redirect($redirect . "?status=0&msg=" . __('your account is not confirmed'));
 
