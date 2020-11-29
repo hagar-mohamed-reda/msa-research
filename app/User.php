@@ -81,15 +81,15 @@ class User  extends Authenticatable
     }
     
     public function researchs() {
-        return Research::all();
+        return Research::query();
     }
     
     public function courses() {
-        return Course::all();
+        return Course::query();
     }
     
     public function studentResearchs() {
-        return StudentResearch::all();
+        return StudentResearch::query();
     }
 
 
