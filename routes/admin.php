@@ -13,7 +13,7 @@
 //exit();
 
 // remote post login
-Route::get('/remote', 'Dashboard\StudentRemoteLoginController@login')->name('remoteLogin');
+Route::get('/remote', 'dashboard\StudentRemoteLoginController@login')->name('remoteLogin');
 
 
 //********************************************
