@@ -32,7 +32,7 @@ class StudentRemoteLoginController extends Controller {
                 return $this->redirectAsAdmin($user);
             }
         }
-        return redirect(route('studentLogin'));
+        return redirect('/students');
     }
 
     public function redirectAsStudent(User $user) {

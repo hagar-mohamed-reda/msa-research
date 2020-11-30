@@ -92,8 +92,6 @@ class User  extends Authenticatable
         return StudentResearch::query();
     }
 
-
-
     public function _can($permissionName) {
         try {
             $permission = Permission::where("name", $permissionName)->first(); 
