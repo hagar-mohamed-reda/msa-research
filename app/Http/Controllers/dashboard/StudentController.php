@@ -157,7 +157,7 @@ class StudentController extends Controller
 
             DB::table('role_user')->insert([
                 "role_id" => 4,
-                "user_id" => $user->id,
+                "user_id" => $student->id,
                 "user_type" => 'App\Student',
             ]);
             notify(__('add student'), __('add student') . " " . $student->name, 'fa fa-user');

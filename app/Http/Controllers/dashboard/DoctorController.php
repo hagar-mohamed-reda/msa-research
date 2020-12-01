@@ -99,7 +99,7 @@ class DoctorController extends Controller
 
             DB::table('role_user')->insert([
                 "role_id" => 3,
-                "user_id" => $user->id,
+                "user_id" => $doctor->id,
                 "user_type" => 'App\Doctor',
             ]);
             notify(__('add doctor'), __('add doctor') . " " . $doctor->name, 'fa fa-user');
