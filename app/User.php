@@ -44,19 +44,20 @@ class User  extends Authenticatable
         'national_id',
         'role_id',
         'graduated',
+        'fid',
         'can_see_result'
     ];
-     
+
 
     public function notifications() {
         return $this->hasMany("App\Notification", "user_id");
     }
 
-    public function toDoctor() { 
+    public function toDoctor() {
         $resource = Doctor::find($this->fid);
         return $resource? $resource : $this;
     }
-    
+
     public function loginHistories() {
         return $this->hasMany("App\LoginHistory");
     }
@@ -79,35 +80,35 @@ class User  extends Authenticatable
     public static function admins() {
         return User::where('type', 'admin');
     }
-    
+
     public function researchs() {
         return Research::query();
     }
-    
+
     public function courses() {
         return Course::query();
     }
-    
+
     public function studentResearchs() {
         return StudentResearch::query();
     }
 
     public function _can($permissionName) {
         try {
-            $permission = Permission::where("name", $permissionName)->first(); 
-            
+            $permission = Permission::where("name", $permissionName)->first();
+
             if (!$permission) {
                 $permission = Permission::create([
                     "name" => $permissionName
                 ]);
             }
-            
-            
+
+
             $role = RoleHasPermission::where("role_id", $this->role_id)->where("permission_id", $permission->id)->first();
 
             if ($role)
                 return true;
-        } catch (\Exception $exc) { } 
+        } catch (\Exception $exc) { }
         return false;
     }
 
