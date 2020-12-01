@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\helper\Message;
 use App\helper\Helper;
-use App\Doctor; 
-use App\User; 
+use App\Doctor;
+use App\User;
 use DB;
 use DataTables;
 
@@ -79,14 +79,14 @@ class DoctorController extends Controller
             return Message::error($key);
         }
         try {
-            $data = $request->all(); 
+            $data = $request->all();
             $data['password'] = bcrypt($request->password);
             $data['username'] = $request->phone;
             $data['email'] = $request->phone;
             $doctor = Doctor::create($data);
-            
+
             // user of doctor
-            User::create([
+            $user = User::create([
                 "name" => $request->name,
                 "phone" => $request->phone,
                 "username" => $request->phone,
@@ -97,6 +97,11 @@ class DoctorController extends Controller
                 "fid" => $doctor->id,
             ]);
 
+            DB::table('role_user')->insert([
+                "role_id" => 3,
+                "user_id" => $user->id,
+                "user_type" => 'App\Doctor',
+            ]);
             notify(__('add doctor'), __('add doctor') . " " . $doctor->name, 'fa fa-user');
 
             return Message::success(Message::$DONE);
@@ -146,7 +151,7 @@ class DoctorController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $key = $validator->errors()->first(); 
+            $key = $validator->errors()->first();
             return Message::error($key);
         }
         try {
@@ -155,12 +160,12 @@ class DoctorController extends Controller
             $data['email'] = $request->phone;
             if ($request->password != $doctor->password)
                 $data['password'] = bcrypt($request->password);
-            
-            $doctor->update($data); 
-            // update user of doctor 
+
+            $doctor->update($data);
+            // update user of doctor
             optional($doctor->user)->update($data);
-            
-            
+
+
             notify(__('edit doctor'), __('edit doctor') . " " . $doctor->name, "fa fa-user");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {
@@ -175,11 +180,11 @@ class DoctorController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Doctor $doctor)
-    { 
+    {
         try {
             notify(__('remove doctor'), __('remove doctor') . " " . $doctor->name, "fa fa-user");
             $doctor->delete();
-            // remove user of doctor 
+            // remove user of doctor
             optional($doctor->user)->delete();
             return Message::success(Message::$REMOVE);
         } catch (\Exception $ex) {
