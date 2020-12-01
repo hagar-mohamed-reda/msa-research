@@ -7,9 +7,9 @@
 <title>{{ optional(App\Setting::find(5))->value }}</title>
 
 <!-- Tell the browser to be responsive to screen width -->
-<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> 
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
- 
+
 
 <!-- Bootstrap 3.3.7 -->
 <link rel="stylesheet" href="{{ url('/') }}/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -61,6 +61,7 @@
 <!-- jQuery 3 -->
 <script src="{{ url('/') }}/js/jquery-3.2.1.min.js"></script>
 
+<link rel="shortcut icon" href="{{ url('/') }}/image/logo.png" type="image/png">
 <!-- commen style -->
 <style>
     *, .font, h1, h2, h3, h4, h5, h6 {
@@ -93,7 +94,7 @@
     .select2 {
         width: 100%!important;
     }
-    
+
     .dt-button {
         display: inline-block!important;
         padding: 6px 12px!important;
@@ -118,7 +119,7 @@
         background-color: #fff!important;
         border-color: #ccc!important;
     }
-    
+
     th, td, label, table {
         text-align: right;
     }
@@ -137,7 +138,7 @@
 
     // max uploaded image size
     var MAX_UPLOADED_IMAGE = 3; // 3 MB
-    
+
     var ERROR_UPLOAD_FILE_MESSAGE = '{{ __("can not upload file more than 3 mb") }}';
 
     var TITLE = "{{ __('new notfications') }}";
