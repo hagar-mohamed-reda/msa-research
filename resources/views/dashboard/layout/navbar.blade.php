@@ -93,23 +93,23 @@
                 <a href="#">
                     <i class="fa fa-graduation-cap"></i> <span>{{ __('courses') }}</span>
                 </a>
-            </li> 
+            </li>
             @endif
-            
-            @if (Auth::user()->type == 'student') 
+
+            @if (Auth::user()->type == 'student')
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/course')" >
                 <a href="#">
                     <i class="fa fa-graduation-cap"></i> <span>{{ __('courses') }}</span>
                 </a>
-            </li>  
+            </li>
             @endif
-            
+
             @if (Auth::user()->_can('course'))
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/course')" >
                 <a href="#">
                     <i class="fa fa-graduation-cap"></i> <span>{{ __('courses') }}</span>
                 </a>
-            </li> 
+            </li>
             @endif
 
             @if (Auth::user()->type == 'admin')
@@ -143,7 +143,7 @@
                 </a>
             </li>
             @endif
-            
+
             @if (Auth::user()->_can('studentgrade'))
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/studentgrade')" >
                 <a href="#">
@@ -151,9 +151,9 @@
                 </a>
             </li>
             @endif
-            
+
             @endif
-            
+
             @if (Auth::user()->type == 'doctor')
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/research')" >
                 <a href="#">
@@ -177,7 +177,7 @@
             @endif
 
             @if (Auth::user()->type == 'admin')
-            
+
             @if (Auth::user()->_can('publish_result'))
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/studentresearch/admin-publish')" >
                 <a href="#">
@@ -185,7 +185,7 @@
                 </a>
             </li>
             @endif
-            
+
             @if (Auth::user()->_can('role'))
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/role')" >
                 <a href="#">
@@ -193,7 +193,7 @@
                 </a>
             </li>
             @endif
-            
+
             @if (Auth::user()->_can('option'))
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/option')" >
                 <a href="#">
@@ -210,64 +210,64 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    
+
                     @if (Auth::user()->_can('course_details_report'))
-                    <li  onclick="showPage('dashboard/report/course-details')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course_details_report') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/course-details')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course_details_report') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('course_details_report2'))
-                    <li  onclick="showPage('dashboard/report/course-details2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course_details_report2') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/course-details2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course_details_report2') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('student_course_report'))
                     <!--
-                    <li  onclick="showPage('dashboard/report/studentcourse')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student courses') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/studentcourse')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student courses') }}</a></li>
                     -->
                     @endif
-                    
-                    @if (Auth::user()->_can('student_result_report')) 
-                    <li  onclick="showPage('dashboard/report/studentresult')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student results') }}</a></li> 
+
+                    @if (Auth::user()->_can('student_result_report'))
+                    <li  onclick="showPage('dashboard/report/studentresult')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student results') }}</a></li>
                     @endif
-                      
-                    @if (Auth::user()->_can('student_result_report2')) 
-                    <li  onclick="showPage('dashboard/report/studentresult2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student results2') }}</a></li> 
+
+                    @if (Auth::user()->_can('student_result_report2'))
+                    <li  onclick="showPage('dashboard/report/studentresult2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student results2') }}</a></li>
                     @endif
-                      
+
                     @if (Auth::user()->_can('course_report'))
-                    <li  onclick="showPage('dashboard/report/course')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course report') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/course')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('course report') }}</a></li>
                     @endif
-                    
-                    
+
+
                     @if (Auth::user()->_can('student_report'))
-                    <li  onclick="showPage('dashboard/report/student')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('un registered student report') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/student')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('un registered student report') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('student_course_research_report'))
-                    <li  onclick="showPage('dashboard/report/student-course-research')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student_course_research_report') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/student-course-research')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student_course_research_report') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('courseResultCountReport'))
-                    <li  onclick="showPage('dashboard/report/course-result-count')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('courseResultCountReport') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/course-result-count')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('courseResultCountReport') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('courseResultCountReport2'))
-                    <li  onclick="showPage('dashboard/report/course-result-count2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('courseResultCountReport2') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/course-result-count2')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('courseResultCountReport2') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('oneStudentResultReport'))
-                    <li  onclick="showPage('dashboard/report/one-student-result')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('oneStudentResultReport') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/one-student-result')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('oneStudentResultReport') }}</a></li>
                     @endif
-                    
+
                     @if (Auth::user()->_can('student_not_upload_research_report'))
                     <!--
-                    <li  onclick="showPage('dashboard/report/student-not-upload-research')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student_not_upload_research_report') }}</a></li> 
+                    <li  onclick="showPage('dashboard/report/student-not-upload-research')" ><a href="#"><i class="fa fa-circle-o"></i>{{ __('student_not_upload_research_report') }}</a></li>
                     -->
                     @endif
-                    
+
                 </ul>
             </li>
-            @endif  
-            
+            @endif
+
             @if (Auth::user()->type == 'doctor')
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/report/student-course-research')" >
                 <a href="#">
@@ -278,22 +278,24 @@
                 <a href="#">
                     <i class="fa fa-line-chart"></i> <span>{{ __('course_details_report') }}</span>
                 </a>
-            </li> 
+            </li>
             @endif
-            
+
             @if (Auth::user()->type == 'student')
+            @if (optional(App\Setting::find(10))->value == 1)
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/result/show')" >
                 <a href="#">
                     <i class="fa fa-newspaper-o"></i> <span>{{ __('results') }}</span>
                 </a>
-            </li> 
+            </li>
+            @endif
             @if (Auth::user()->toStudent()->grades()->count() > 0)
             @if (optional(App\Setting::find(10))->value == 1)
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/studentgrade/show')" >
                 <a href="#">
                     <i class="fa fa-newspaper-o"></i> <span>{{ __('student grade') }}</span>
                 </a>
-            </li> 
+            </li>
             @endif
             @endif
             @endif

@@ -84,14 +84,14 @@ class MyResearchController extends Controller
                     "course_id" => $course->id,
                     "file" => "-",
                     "upload_date" => date("Y-m-d"),
-                    "is_second_period" => 1
+                    "is_second_period" => 0
                 ]);
             } else {
                 $studentResearch->update([
                     "upload_date" => date("Y-m-d"),
                     "research_id" => $request->research_id,
                     "course_id" => $course->id,
-                    "is_second_period" => 1
+                    "is_second_period" => 0
                 ]);
             }
 
