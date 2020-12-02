@@ -88,12 +88,12 @@
                 <i class="fa fa-desktop w3-text-green w3-button"  onclick="edit('{{ url('/dashboard/course/show') . '/' . $item->id }}')" > {{ __('register student') }} </i>
             </td>
             <td>
-                {{ App\StudentCourse::join("students", "students.fid", "=", "student_courses.student_id")->where('level_id', 1)->where('course_id', $item->id)->count() }}
+                {{ App\StudentCourse::join("students", "students.id", "=", "student_courses.student_id")->where('level_id', 1)->where('course_id', $item->id)->count() }}
                 <br>
                 <i class="fa fa-desktop w3-text-green w3-button"  onclick="edit('{{ url('/dashboard/course/show') . '/' . $item->id }}?level_id=1')" > {{ __('register student') }} </i>
             </td>
             <td>
-                {{ App\StudentCourse::join("students", "students.fid", "=", "student_courses.student_id")->where('level_id', 2)->where('course_id', $item->id)->count() }}
+                {{ App\StudentCourse::join("students", "students.id", "=", "student_courses.student_id")->where('level_id', 2)->where('course_id', $item->id)->count() }}
 
                 <br>
                 <i class="fa fa-desktop w3-text-green w3-button"  onclick="edit('{{ url('/dashboard/course/show') . '/' . $item->id }}?level_id=2')" > {{ __('register student') }} </i>
@@ -102,7 +102,7 @@
                 <ul style="width: 100px" class="w3-tiny" >
                 @foreach(App\Department::where('level_id', 3)->get() as $depart)
                 <li>
-                    {{ $depart->name }} : {{ App\StudentCourse::join("students", "students.fid", "=", "student_courses.student_id")->where('department_id', $depart->id)->where('level_id', 3)->where('course_id', $item->id)->count() }}
+                    {{ $depart->name }} : {{ App\StudentCourse::join("students", "students.id", "=", "student_courses.student_id")->where('department_id', $depart->id)->where('level_id', 3)->where('course_id', $item->id)->count() }}
                 </li>
                 @endforeach
                 </ul>
