@@ -252,7 +252,7 @@ class StudentController extends Controller
             notify(__('edit student'), __('edit student') . " " . $student->name, "fa fa-user");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {
-            return Message::error(Message::$ERROR);
+            return Message::error($ex->getMessage());
         }
     }
 
