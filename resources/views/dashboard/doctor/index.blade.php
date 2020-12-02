@@ -70,6 +70,10 @@
 </script>
 @endif
 <script>
+    $('.app-add-button').click(function(){
+        window.open('http://lms.seyouf.sphinxws.com/ar/dashboard/doctors/create');
+    });
+
 $(document).ready(function() {
      $('#table').DataTable({
         "processing": true,
