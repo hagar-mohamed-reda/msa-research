@@ -30,7 +30,7 @@
 @endsection
 
 @section("additional")
-<!-- add modal -->
+<!-- add modal
 <div class="modal fade"  role="dialog" id="addModal" style="width: 100%!important;height: 100%!important" >
     <div class="modal-dialog modal-" role="document" >
     <div class="modal-content">
@@ -41,10 +41,10 @@
       <div class="modal-body">
         {!! $builder->loadAddView() !!}
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
+    </div>
+  </div>
+</div>
+-->
 
 <!-- edit modal -->
 <div class="modal fade"  role="dialog" id="editModal" style="width: 100%!important;height: 100%!important" >
