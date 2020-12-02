@@ -98,7 +98,7 @@
 
 
 
-                    <center class="center" > 
+                    <center class="center" >
 
                     <div class="title text-capitalize">{{ __('Drop file to upload') }}</div>
 
@@ -118,7 +118,7 @@
 
                     <img src="https://100dayscss.com/codepen/syncing.svg" class="syncing">
 
-                    <img src="https://100dayscss.com/codepen/checkmark.svg" class="done"> 
+                    <img src="https://100dayscss.com/codepen/checkmark.svg" class="done">
 
                     <br>
 
@@ -130,13 +130,13 @@
 
                     <br>
 
-                </div> 
+                </div>
 
                 <div class="modal-footer"   >
 
-                    <div class="upload-btn text-capitalize"  
+                    <div class="upload-btn text-capitalize"
 
-                         onclick="$('#import-form').submit()" >{{ __('upload file') }}</div>  
+                         onclick="$('#import-form').submit()" >{{ __('upload file') }}</div>
 
                 </div>
 
@@ -146,9 +146,9 @@
 
         </div><!-- /.modal-content -->
 
-    </div><!-- /.modal-dialog --> 
+    </div><!-- /.modal-dialog -->
 
-</div><!-- /.modal --> 
+</div><!-- /.modal -->
 
 
 @endsection
@@ -161,6 +161,9 @@
 </script>
 @endif
 <script>
+    $('.app-add-button button').click(function(){
+        window.open('http://lms.seyouf.sphinxws.com/ar/dashboard/students/create');
+    });
 
 
 var droppedFiles = false;
@@ -272,7 +275,7 @@ function showDone() {
     });
 
     $button.html('Done');
-    
+
     showPage('dashboard/student');
 
 }
@@ -280,7 +283,7 @@ function showDone() {
 formAjax(false, function(r){
 
     showDone();
-    
+
 });
 
 $(document).ready(function() {

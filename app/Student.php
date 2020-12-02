@@ -144,8 +144,8 @@ class Student extends Model
         foreach(Department::all() as $item)
             $departments[] = [$item->id, $item->name . "-" . optional($item->level)->name];
 
-        $builder->setAddRoute(self::$STUDENT_STORE_API)
-                ->setEditRoute(self::$STUDENT_UPDATE_API . "/" . $this->id)
+        $builder->setAddRoute(url('/dashboard/student/store'))
+                ->setEditRoute(url('/dashboard/student/update') . "/" . $this->id)
                 //->setCol(["name" => "id", "label" => __('id'), "editable" => false])
                 ->setCol(["name" => "code", "label" => __('code')])
                 ->setCol(["name" => "name", "label" => __('name')])
