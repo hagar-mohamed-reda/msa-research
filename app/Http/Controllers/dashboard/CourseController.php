@@ -167,7 +167,7 @@ class CourseController extends Controller
      */
     public function show(Request $request, Course $course) {
         $query = StudentCourse::query()
-            ->join("users", "users.fid", "=", "student_courses.student_id")
+            ->join("students", "students.id", "=", "student_courses.student_id")
             ->where('course_id', $course->id);
 
         if ($request->level_id > 0) {
@@ -188,7 +188,7 @@ class CourseController extends Controller
                 $studentsIdHasResearch = StudentResearch::where('course_id', $request->course_id)->pluck('student_id')->toArray();
                 //$studentsIdNotHasResearch = StudentCourse::where('course_id', $request->course_id)->whereNotIn('student_id', $studentsIdHasResearch)->pluck('id')->toArray();
 
-                $query->where('users.graduated', 0)->whereNotIn('student_id', $studentsIdHasResearch);
+                $query->where('students.graduated', 0)->whereNotIn('student_id', $studentsIdHasResearch);
             }
 
             if ($request->has_result == 1) {
@@ -204,7 +204,7 @@ class CourseController extends Controller
             }
 
             if ($request->graduated == 1) {
-                $query->where('users.graduated', 1);
+                $query->where('students.graduated', 1);
             }
         }
 
