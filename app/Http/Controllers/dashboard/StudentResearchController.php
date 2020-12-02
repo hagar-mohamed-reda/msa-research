@@ -11,6 +11,7 @@ use App\StudentResearch;
 use App\Notification;
 use App\Research;
 use App\User;
+use App\Setting;
 use DB;
 use DataTables;
 
@@ -34,25 +35,35 @@ class StudentResearchController extends Controller
     public function adminPublish() {
         return view("dashboard.studentresearch.adminPublish");
     }
-    
+
     public function showResult() {
         return view("dashboard.myresearch.result");
     }
-    
+
     /**
-     * publish result of all students 
-     * 
+     * publish result of all students
+     *
      */
     function publishResultForAdmin(Request $request) {
         try {
             StudentResearch::query()->where('result_id', '!=', null)->update([
                 "admin_publish" => $request->publish
             ]);
-            
+
+            $setting = Setting::find(10);
+
+            if ($setting) {
+                $setting->update([
+                    "value" => $request->publish
+                ]);
+            }
+
+
+            if ($request->publish == 1)
             foreach(User::students()->get() as $item) {
                 Notification::notifyUser(__('publish result of students'), __('publish result of students'), "fa fa-newspaper-o", $item->id);
             }
-            
+
             notify(__('publish result of students '), __('publish result of students '), "fa fa-circle");
             return Message::success(Message::$DONE);
         } catch (\Exception $ex) {
@@ -62,7 +73,7 @@ class StudentResearchController extends Controller
     /**
      * return json data
      */
-    public function getData() { 
+    public function getData() {
         //$researchIds = Research::where("doctor_id", Auth::user()->id)->pluck("id")->toArray();
 
         //$query = StudentResearch::whereIn("research_id", $researchIds);
@@ -73,7 +84,7 @@ class StudentResearchController extends Controller
             $coursesId = Auth::user()->toDoctor()->courses()->pluck('id')->toArray();
             $query = StudentResearch::whereIn("course_id", $coursesId);
         }
-         
+
         if (request()->student_id > 0)
             $query->where("student_id", request()->student_id);
 
@@ -94,13 +105,13 @@ class StudentResearchController extends Controller
             $studentIds = User::where('level_id', request()->level_id)->select("id")->pluck("id")->toArray();
             $query->whereIn("student_id", $studentIds);
         }
-         
-           
+
+
         if (request()->department_id > 0) {
             $studentIds = User::where('department_id', request()->department_id)->select("id")->pluck("id")->toArray();
             $query->whereIn("student_id", $studentIds);
-        } 
-        
+        }
+
         return DataTables::eloquent($query)
                         ->addColumn('action', function(StudentResearch $studentresearch) {
                             return view("dashboard.studentresearch.action", compact("studentresearch"));
@@ -120,7 +131,7 @@ class StudentResearchController extends Controller
                         })
                         ->editColumn('student_id', function(StudentResearch $studentresearch) {
                             return optional($studentresearch->student)->name;
-                        }) 
+                        })
                         ->editColumn('file', function(StudentResearch $studentresearch) {
                             return "<b class='btn label w3-blue student-research-span' data-open='off' data-student='".optional($studentresearch->student)->name . "-". optional(optional($studentresearch->student)->department)->name . "-" . optional(optional($studentresearch->student)->level)->name ."'  data-src='" . $studentresearch->file_url . "' onclick='viewFile(this)' >" . $studentresearch->file . "</b>";
                         })
