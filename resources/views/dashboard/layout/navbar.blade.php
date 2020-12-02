@@ -282,6 +282,7 @@
             @endif
 
             @if (Auth::user()->type == 'student')
+
             @if (optional(App\Setting::find(10))->value == 1)
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/result/show')" >
                 <a href="#">
@@ -289,6 +290,7 @@
                 </a>
             </li>
             @endif
+
             @if (Auth::user()->toStudent()->grades()->count() > 0)
             @if (optional(App\Setting::find(10))->value == 1)
             <li class="treeview font w3-text-pink" onclick="showPage('dashboard/studentgrade/show')" >
@@ -298,6 +300,7 @@
             </li>
             @endif
             @endif
+
             @endif
         </ul>
     </section>
