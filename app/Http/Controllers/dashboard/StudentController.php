@@ -83,7 +83,7 @@ class StudentController extends Controller
 
         //return $course;
 
-        return DataTables::eloquent(Student::query())
+        return DataTables::eloquent(Student::latest())
                         ->addColumn('action', function(Student $student) {
                             return view("dashboard.course.student", compact("student"));
                         })

@@ -16,10 +16,10 @@ class Admin {
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next) {  
+    public function handle($request, Closure $next) {
         $user = Auth::user();
-        
-        if ($user) { 
+
+        if ($user) {
             return $next($request);
         }
 

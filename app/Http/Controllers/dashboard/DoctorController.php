@@ -28,7 +28,7 @@ class DoctorController extends Controller
      * return json data
      */
     public function getData() {
-        return DataTables::eloquent(Doctor::query())
+        return DataTables::eloquent(Doctor::latest())
                         ->addColumn('action', function(Doctor $doctor) {
                             return view("dashboard.doctor.action", compact("doctor"));
                         })
