@@ -19,6 +19,9 @@ class Student extends Model
      */
     protected $table = "students";
 
+    public static $STUDENT_STORE_API = "http://lms.seyouf.sphinxws.com/api/student-store";
+    public static $STUDENT_UPDATE_API = "http://lms.seyouf.sphinxws.com/api/student-update";
+
     /**
      * The attributes that are mass assignable.
      *
@@ -43,7 +46,7 @@ class Student extends Model
         'graduated',
         'can_see_result'
     ];
-    
+
     public function user() {
         return $this->hasOne("App\User", "fid");
     }
@@ -51,20 +54,20 @@ class Student extends Model
     public function toStudent() {
         return $this;
     }
-    
+
     public function grades() {
         return $this->hasMany('App\StudentGrade', 'student_id');
     }
-    
+
     public function getResult($course) {
         //$researchsId = Research::where('course_id', $course)->pluck('id')->toArray();
         return StudentResearch::where('course_id', $course)->where('student_id', $this->id)->first();
     }
-    
+
     public function department() {
         return $this->belongsTo("App\Department");
     }
-    
+
     public function level() {
         return $this->belongsTo("App\Level");
     }
@@ -85,35 +88,35 @@ class Student extends Model
 
     public function IsUploadFileForResearch($research) {
         $file = StudentResearch::where('research_id', $research)->where("student_id", $this->id)->first();
-        
+
         return $file? true : false;
     }
 
     public function IsUploadFileForCourse($course) {
         $file = StudentResearch::where('course_id', $course)->where("student_id", $this->id)->first();
-        
-        
+
+
         if (!$file)
             return false;
-        
+
         $rs = Research::find($file->research_id);
-        
+
         $today = strtotime(date('Y-m-d'));
-        $maxDate = strtotime($rs->max_date/*. ' + 7 days'*/); 
+        $maxDate = strtotime($rs->max_date/*. ' + 7 days'*/);
 
         if ($file) {
             if ($file->result_id != null)
                 return true;
         }
-        
+
         if ($today > $maxDate) {
             return true;
         }
 
-        
+
         return false;
     }
-    
+
     public function getUploadedFileForResearch($research) {
         $file = StudentResearch::where('research_id', $research)->where("student_id", $this->id)->first();
         return $file;
@@ -132,17 +135,17 @@ class Student extends Model
         $builder = new ViewBuilder($this, "rtl");
 
         $levels = [];
-        
+
         foreach(Level::all() as $item)
             $levels[] = [$item->id, $item->name];
-        
+
         $departments = [];
-        
+
         foreach(Department::all() as $item)
             $departments[] = [$item->id, $item->name . "-" . optional($item->level)->name];
-        
-        $builder->setAddRoute(url('/dashboard/student/store'))
-                ->setEditRoute(url('/dashboard/student/update') . "/" . $this->id)
+
+        $builder->setAddRoute(self::$STUDENT_STORE_API)
+                ->setEditRoute(self::$STUDENT_UPDATE_API . "/" . $this->id)
                 //->setCol(["name" => "id", "label" => __('id'), "editable" => false])
                 ->setCol(["name" => "code", "label" => __('code')])
                 ->setCol(["name" => "name", "label" => __('name')])
@@ -153,11 +156,11 @@ class Student extends Model
                 ->setCol(["name" => "active", "label" => __('active'), "type" => "checkbox"])
                 ->setCol(["name" => "level_id", "label" => __('level'), "type" => "select", "data" => $levels, "col" => 'col-lg-12 col-md-12 col-sm-12'])
                 ->setCol(["name" => "department_id", "label" => __('department'), "type" => "select", "data" => $departments, "col" => 'col-lg-12 col-md-12 col-sm-12'])
-                
+
                 //->setCol(["name" => "sms_code", "label" => __('sms_code'), "editable" => false])
-                ->setCol(["name" => "account_confirm", "label" => __('confirm_account'), "editable" => false]) 
-                ->setCol(["name" => "graduated", "label" => __('graduated'), "editable" => false]) 
-                ->setCol(["name" => "can_see_result", "label" => __('can_see_result'), 'type' => 'checkbox']) 
+                ->setCol(["name" => "account_confirm", "label" => __('confirm_account'), "editable" => false])
+                ->setCol(["name" => "graduated", "label" => __('graduated'), "editable" => false])
+                ->setCol(["name" => "can_see_result", "label" => __('can_see_result'), 'type' => 'checkbox'])
                 ->setUrl(url('/image/students'))
                 ->build();
 
