@@ -161,7 +161,7 @@
 </script>
 @endif
 <script>
-    $('.app-add-button button').click(function(){
+    $('.app-add-button').click(function(){
         window.open('http://lms.seyouf.sphinxws.com/ar/dashboard/students/create');
     });
 
