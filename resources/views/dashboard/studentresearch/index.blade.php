@@ -8,34 +8,34 @@
 @endphp
 
 @section("content")
-<div class="filters w3-row" id="filter"   > 
+<div class="filters w3-row" id="filter"   >
         <div class="form-group has-feedback w3-col l3 m3 s6 w3-padding">
-            <label>{{ __("department") }}</label> 
+            <label>{{ __("department") }}</label>
             <select name="type" class="form-control" select2="off"  onchange="filter.filter.department_id=this.value" >
-                <option value="">{{ __('select all') }}</option> 
+                <option value="">{{ __('select all') }}</option>
                 @foreach(App\Department::all() as $item)
-                <option value="{{ $item->id }}"  
+                <option value="{{ $item->id }}"
                 v-if="[{{ implode(", ", App\CourseDepartment::where('department_id', $item->id)->pluck('course_id')->toArray()) }}].includes(parseInt(filter.course_id)) || filter.course_id == 0"  >{{ $item->name }} - {{ optional($item->level)->name }}</option>
-                @endforeach  
-            </select> 
-        </div> 
-        
+                @endforeach
+            </select>
+        </div>
+
         <div class="form-group has-feedback w3-col l3 m3 s6 w3-padding">
-            <label>{{ __("research") }}</label> 
+            <label>{{ __("research") }}</label>
             <select name="type" class="form-control" select2="off"  onchange="filter.filter.research_id=this.value" >
-                <option value="">{{ __('select all') }}</option> 
+                <option value="">{{ __('select all') }}</option>
                 @if (Auth::user()->type ==  'admin')
                 @foreach(App\Research::all() as $item)
                 <option value="{{ $item->id }}" v-if="(filter.course_id=='{{ $item->course_id }}') || filter.course_id == 0"  >{{ $item->title }}</option>
-                @endforeach 
-                @else 
-                @foreach(Auth::user()->toDoctor()->researchs()->get() as $item)
+                @endforeach
+                @else
+                @foreach(App\Research::where('doctor_id', Auth::user()->fid)->get() as $item)
                 <option value="{{ $item->id }}" v-if="(filter.course_id=='{{ $item->course_id }}') || filter.course_id == 0"  >{{ $item->title }}</option>
-                @endforeach 
+                @endforeach
                 @endif
-            </select> 
-        </div>  
-        
+            </select>
+        </div>
+
         <div class="form-group has-feedback w3-col l3 m3 s6 w3-padding">
             <label>{{ __("select course") }}</label>
             <select name="type" class="form-control select2" select2="on" onchange="filter.filter.course_id=this.value"   >
@@ -43,65 +43,65 @@
                 @if (Auth::user()->type ==  'admin')
                 @foreach(App\Course::all() as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach 
-                
+                @endforeach
+
                 @else
-                
+
                 @foreach(Auth::user()->toDoctor()->courses()->get() as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach 
+                @endforeach
                 @endif
-            </select> 
-        </div> 
-         
+            </select>
+        </div>
+
         <div class="form-group has-feedback w3-col l3 m3 s6 w3-padding">
             <label>{{ __("result") }}</label>
             <select name="type" class="form-control select2"  onchange="filter.filter.result_id=this.value" >
                 <option value="">{{ __('select all') }}</option>
                 @foreach(App\Result::all() as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach 
-            </select> 
-        </div> 
-        
-        <div class="form-group has-feedback w3-col l4 m4 s6 w3-padding"> 
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group has-feedback w3-col l4 m4 s6 w3-padding">
             <br>
             <button class="fa fa-search btn btn-success btn-flat" onclick="search()" ></button>
-        </div> 
-      
+        </div>
+
         <div class="form-group has-feedback w3-col l4 m4 s6 w3-padding">
             <label>{{ __("student") }}</label>
             <select name="type" class="form-control select2"  onchange="filter.filter.student_id=this.value"   >
                 <option value="">{{ __('choose student') }}</option>
                 @foreach(App\User::students()->get() as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach 
-            </select> 
+                @endforeach
+            </select>
         </div>
-         
-        
+
+
         <div class="form-group has-feedback w3-col l4 m4 s6 w3-padding">
-            <label>{{ __("level") }}</label> 
+            <label>{{ __("level") }}</label>
             <select name="type" class="form-control" select2="off"  onchange="filter.filter.level_id=this.value" >
-                <option value="">{{ __('select all') }}</option> 
+                <option value="">{{ __('select all') }}</option>
                 @foreach(App\Level::all() as $item)
-                <option value="{{ $item->id }}" 
+                <option value="{{ $item->id }}"
                 v-if="[{{ implode(", ", App\CourseDepartment::join('departments', 'course_departments.department_id', '=', 'departments.id')->where('level_id', $item->id)->pluck('course_id')->toArray()) }}].includes(parseInt(filter.course_id)) || filter.course_id == 0"
                 >{{ $item->name }}</option>
-                @endforeach  
-            </select> 
-        </div> 
-        
+                @endforeach
+            </select>
+        </div>
+
 </div>
 <table class="table table-bordered" id="table" >
     <thead>
-        <tr> 
-            <th>{{ __('student') }}</th> 
-            <th>{{ __('course') }}</th> 
-            <th>{{ __('research') }}</th> 
-            <th>{{ __('file') }}</th> 
-            <th>{{ __('result') }}</th> 
-            <th>{{ __('upload_date') }}</th> 
+        <tr>
+            <th>{{ __('student') }}</th>
+            <th>{{ __('course') }}</th>
+            <th>{{ __('research') }}</th>
+            <th>{{ __('file') }}</th>
+            <th>{{ __('result') }}</th>
+            <th>{{ __('upload_date') }}</th>
             <th></th>
         </tr>
     </thead>
@@ -121,41 +121,41 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <center class="modal-title w3-xlarge">{{ __('download student researches') }}</center>
       </div>
-      <div class="modal-body"> 
-        <div class="w3-row" > 
+      <div class="modal-body">
+        <div class="w3-row" >
             <div class="form-group has-feedback w3-col w3-padding">
                 <label>{{ __("select level") }}</label>
-                <select name="level_id" class="form-control select2" select2="off" v-model="download.level_id" >  
-                    <option value="0">{{ __('select all') }}</option> 
+                <select name="level_id" class="form-control select2" select2="off" v-model="download.level_id" >
+                    <option value="0">{{ __('select all') }}</option>
                     @foreach(App\Level::all() as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
-                </select> 
-            </div> 
+                </select>
+            </div>
             <div class="form-group has-feedback w3-col   w3-padding">
                 <label>{{ __("select department") }}</label>
-                <select name="department_id" class="form-control select2" select2="off"  v-model="download.department_id" >    
-                    <option value="">{{ __('select all') }}</option> 
+                <select name="department_id" class="form-control select2" select2="off"  v-model="download.department_id" >
+                    <option value="">{{ __('select all') }}</option>
                     @foreach(App\Department::all() as $item)
                     <option value="{{ $item->id }}" v-if="download.level_id=='{{ $item->level_id }}' || download.level_id=='0'" >{{ $item->name }}</option>
                     @endforeach
-                </select> 
-            </div> 
+                </select>
+            </div>
             <!--
              v-if="[{{ implode(", ", DB::table('course_departments')->where('course_id', $item->id)->pluck('department_id')->toArray()) }}].includes(parseInt(download.department_id)) || download.department_id == 0"
             -->
             <div class="form-group has-feedback w3-col w3-padding">
                 <label>{{ __("course") }}</label>
-                <select name="course_id" class="form-control select2 course_id_select" select2="on"  onchange="download.download.course_id=this.value"     >  
-                    <option value="0">{{ __('select all') }}</option> 
+                <select name="course_id" class="form-control select2 course_id_select" select2="on"  onchange="download.download.course_id=this.value"     >
+                    <option value="0">{{ __('select all') }}</option>
                     @foreach(Auth::user()->type == 'admin'? App\Course::all() : Auth::user()->toDoctor()->courses()->get() as $item)
                     <option value="{{ $item->id }}"
-                
-                       
+
+
                     >{{ $item->name }}</option>
                     @endforeach
-                </select> 
-            </div> 
+                </select>
+            </div>
             <div class="form-group has-feedback w3-col w3-padding">
                 <center>
                     <button   class="btn btn-primary btn-flat"  onclick="downloadFile(this)" >
@@ -200,7 +200,7 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
- 
+
 <div class="modal fade"  role="dialog" id="publishModal" style="width: 100%!important;height: 100%!important" >
     <div class="modal-dialog modal-" role="document" >
     <div class="modal-content">
@@ -212,15 +212,15 @@
             <center class="w3-xlarge" >
                  {{ __('are your sure to publish the result of students') }}
             </center>
-            
+
             <br>
             <ul>
                 <li class="w3-large" >
                     {{ __('total of students has result') }} : {{ Auth::user()->toDoctor()->studentResearchs()->where('result_id', '!=', null)->count() }}
-                </li> 
-            </ul> 
+                </li>
+            </ul>
             <center>
-                
+
                 <button class="btn btn-primary" onclick="publishResultAll()" >{{ __('publish result') }}</button>
             </center>
       </div>
@@ -234,7 +234,7 @@
     <button class="btn btn-warning btn-flat" onclick="$('#publishModal').modal('show')" >
         {{ __('publish result') }}
     </button>
-    
+
 <button class=" btn btn-primary btn-flat" onclick="$('.filters').slideToggle(300)" >
     <i class="fa fa-filter" ></i> {{ __('filters') }}
 </button>
@@ -245,18 +245,18 @@
 @endsection
 
 @section("js")
-  
+
 <script>
     var table = null;
     $('.app-add-button').remove();
-    
+
     function downloadAll() {
         $(".student-research-span").each(function(){
             downloadURI(this.getAttribute('data-src'), this.getAttribute('data-student'));
-            //window.open(this.getAttribute('data-src')); 
+            //window.open(this.getAttribute('data-src'));
         });
     }
-    function downloadURI(uri, name) 
+    function downloadURI(uri, name)
     {
         var link = document.createElement("a");
         // If you don't know the name or want to use
@@ -267,17 +267,17 @@
         link.click();
         link.remove();
     }
-    
-    function updateStatus(id, status, button) { 
+
+    function updateStatus(id, status, button) {
         var opened = $('.student-research-action-'+id).parent().parent().find('.student-research-span').attr('data-open');
         console.log(opened);
         if (opened == 'off')
             return error('{{ __("please open the research first") }}');
-            
+
         console.log(status);
         //if (!status || status.length <= 0)
         //    return error("{{ __('please choose the result') }}");
-        
+
         var data = {
             _token: '{{ csrf_token() }}',
             status: status
@@ -286,15 +286,15 @@
         $.post('{{ url("/dashboard/studentresearch/status/update") }}/'+id, $.param(data), function(r) {
             if (r.status == 1)
                 success(r.message);
-            else 
+            else
                 error(r.message);
-            
+
             $('#table').DataTable().ajax.reload();
             $(button).html('<i class="fa fa-check" ></i>');
         });
     }
-    
-    function publishResultAll() { 
+
+    function publishResultAll() {
         swal({
             title: "😧 هل انت متاكد?",
             icon: "warning",
@@ -303,41 +303,41 @@
         }).then(function (willDelete) {
             if (willDelete) {
                 $('.publish-result').click();
-                
+
             } else {
             }
         });
     }
-    
-    
-    function publishResult(id, button) { 
-        
+
+
+    function publishResult(id, button) {
+
                 var data = {
-                    _token: '{{ csrf_token() }}'  
+                    _token: '{{ csrf_token() }}'
                 };
                 $(button).html('<i class="fa fa-spin fa-spinner" ></i>');
                 $.post('{{ url("/dashboard/studentresearch/publish-result") }}/'+id, $.param(data), function(r) {
                     /*if (r.status == 1)
                         success(r.message);
-                    else 
+                    else
                         error(r.message);
 */
                     $('#table').DataTable().ajax.reload();
                     $(button).html('{{ __("publish result") }}');
-                }); 
+                });
     }
-    
-    function search() {  
+
+    function search() {
         //alert();
         table.ajax.url("{{ url('/dashboard/studentresearch/data') }}?"+$.param(filter.filter)).load();
     }
-    
+
     function downloadFile(button) {
         var html = $(button).html();
         //
         $(button).html("<i class='fa fa-spinner fa-spin' ></i>");
         $(button).attr('disabled', 'disabled');
-        
+
         $.post('{{ url("/dashboard/studentresearch/download") }}', $.param(download.download), function(r){
             if (r.status == 1) {
                   window.open(r.data.url);
@@ -345,15 +345,15 @@
             } else {
                 error(r.message);
             }
-            
+
             $(button).html(html);
             $(button).removeAttr('disabled');
         });
     }
- 
+
 var download = new Vue({
     el: '#downloadModal',
-    data: {   
+    data: {
         download: {
             _token: '{{ csrf_token() }}',
             level_id: null,
@@ -361,7 +361,7 @@ var download = new Vue({
             course_id: null
         }
     },
-    methods: { 
+    methods: {
     },
     computed: {
     },
@@ -369,16 +369,16 @@ var download = new Vue({
     }
 });
 
-      
+
 var filter = new Vue({
     el: '#filter',
-    data: { 
+    data: {
         filter: {
             course_id: null,
             research_id: null
-        },  
+        },
     },
-    methods: { 
+    methods: {
     },
     computed: {
     },
@@ -402,13 +402,13 @@ $(document).ready(function() {
                 'csvHtml5',
                 'pdfHtml5'
             ],
-        "columns":[  
-            { "data": "student_id" }, 
-            { "data": "course_id" }, 
-            { "data": "research_id" }, 
-            { "data": "file" }, 
-            { "data": "result_id" }, 
-            { "data": "upload_date" }, 
+        "columns":[
+            { "data": "student_id" },
+            { "data": "course_id" },
+            { "data": "research_id" },
+            { "data": "file" },
+            { "data": "result_id" },
+            { "data": "upload_date" },
             { "data": "action" }
         ]
      });
