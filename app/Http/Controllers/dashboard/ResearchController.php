@@ -32,18 +32,18 @@ class ResearchController extends Controller
     public function getData() {
         $user = Auth::user();
         $query = Research::query();
-        
+
         if (Auth::user()->type == 'admin') {
             $query = Research::query();
         } else {
             $coursesIds = $user->toDoctor()->courses()->pluck('id')->toArray();
             $query = Research::whereIn('course_id', $coursesIds);
         }
-            
-            
+
+
         if (request()->course_id > 0)
             $query->where('course_id', request()->course_id);
-        
+
         return DataTables::eloquent($query)
                         ->addColumn('action', function(Research $research) {
                             return view("dashboard.research.action", compact("research"));
@@ -82,20 +82,20 @@ class ResearchController extends Controller
     {
         if ($request->course_id <= 0)
             return Message::error("please select course");
-            
+
         try {
             $data = $request->all();
-            $data['doctor_id'] = Auth::user()->id;
+            $data['doctor_id'] = Auth::user()->fid;
             $research = Research::create($data);
 
-            
+
             // upload attachment
             Helper::uploadFile($request->file("file"), "/research", function($filename) use ($research){
                 $research->update([
                     "file" => $filename
                 ]);
             });
-            
+
             notify(__('add research'), __('add research') . " " . $research->name, 'fa fa-newspaper-o');
 
             return Message::success(Message::$DONE);
@@ -137,10 +137,10 @@ class ResearchController extends Controller
     {
         try {
             $data = $request->all();
-            $data['doctor_id'] = Auth::user()->id;
+            $data['doctor_id'] = Auth::user()->fid;
             $research->update($data);
 
-            
+
             // upload attachment
             Helper::uploadFile($request->file("file"), "/research", function($filename) use ($research){
                 $research->update([
@@ -153,7 +153,7 @@ class ResearchController extends Controller
             return Message::error(Message::$ERROR);
         }
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -168,25 +168,25 @@ class ResearchController extends Controller
         ], [
             "max_date.required" => __('max_date is required')
         ]);
-        
+
         if ($validator->fails()) {
             $key = $validator->errors()->first();
-            return Message::error($key); 
+            return Message::error($key);
         }
-        try { 
+        try {
             Research::query()->update([
-                "max_date" => $request->max_date, 
+                "max_date" => $request->max_date,
                 "is_second_period" => 1
             ]);
-            
+
             $setting = Setting::find(9);
-            
+
             if ($setting) {
                 $setting->update([
-                    "value" => $request->max_date    
+                    "value" => $request->max_date
                 ]);
             }
- 
+
             notify(__('edit research max date'), __('edit research max date'), "fa fa-calendar-o");
             return Message::success(Message::$EDIT);
         } catch (\Exception $ex) {

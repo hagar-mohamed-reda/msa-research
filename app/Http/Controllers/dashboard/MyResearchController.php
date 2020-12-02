@@ -26,7 +26,7 @@ class MyResearchController extends Controller
     {
         if (Auth::user()->type == 'student' && Auth::user()->graduated == 1)
             return view("dashboard.student.graduated");
-            
+
         return view("dashboard.myresearch.index");
     }
 
@@ -34,9 +34,9 @@ class MyResearchController extends Controller
      * return json data
      */
     public function getData() {
-         
+
     }
-     
+
 
     /**
      * Show the form for creating a new resource.
@@ -55,31 +55,31 @@ class MyResearchController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Course $course, Request $request)
-    { 
+    {
         // validate the data
         $validator = validator()->make($request->all(), [
             'file' => 'mimes:pdf|max:10000|required',
             'research_id' => 'required'
         ], [
-            "file.required" => __("file_required"), 
-            "research.required" => __("please_select_research"), 
-            "file.mimes" => __("file type must be pdf"), 
-            "file.max" => __("file max size is 10 mb"),  
+            "file.required" => __("file_required"),
+            "research.required" => __("please_select_research"),
+            "file.mimes" => __("file type must be pdf"),
+            "file.max" => __("file max size is 10 mb"),
         ]);
-        
+
         if ($validator->fails()) {
-            $key = $validator->errors()->first();  
+            $key = $validator->errors()->first();
             return Message::error(__($key));
         }
-        try {  
+        try {
             $research = Research::find($request->research_id);
-            
-            $studentResearch = StudentResearch::where('student_id', Auth::user()->id)->where('course_id', $course->id)->first();
-            
+
+            $studentResearch = StudentResearch::where('student_id', Auth::user()->fid)->where('course_id', $course->id)->first();
+
             if (!$studentResearch) {
-                
+
                 $studentResearch = StudentResearch::create([
-                    "student_id" => Auth::user()->id,
+                    "student_id" => Auth::user()->fid,
                     "research_id" => $request->research_id,
                     "course_id" => $course->id,
                     "file" => "-",
@@ -94,30 +94,30 @@ class MyResearchController extends Controller
                     "is_second_period" => 1
                 ]);
             }
-            
+
             // delete odl file
             if (file_exists(public_path() . "/file/studentresearch/" . $studentResearch->file)) {
                 unlink(public_path() . "/file/studentresearch/" . $studentResearch->file);
             }
-            
+
             // upload attachment
             Helper::uploadFile($request->file("file"), "/studentresearch", function($filename) use ($studentResearch){
                 $studentResearch->update([
                     "file" => $filename
                 ]);
             });
-            
+
             // notify the doctor
             Notification::notifyUser(__('new uploaded research'), __('new upload research from '). Auth::user()->name, "fa fa-newspaper-o", $research->doctor_id);
-            
-            
-            
+
+
+
             notify(__('your upload a research'), __('your upload research ') . " " . $research->title, 'fa fa-newspaper-o');
 
             return Message::success(Message::$DONE);
         } catch (\Exception $ex) {
             return Message::error(Message::$ERROR . $ex->getMessage());
-        } 
+        }
     }
 
     /**
@@ -128,7 +128,7 @@ class MyResearchController extends Controller
      */
     public function show(Course $course)
     {
-        $studentResearch = StudentResearch::where('course_id', $course->id)->where('student_id', Auth::user()->id)->first();
+        $studentResearch = StudentResearch::where('course_id', $course->id)->where('student_id', Auth::user()->fid)->first();
         return view("dashboard.myresearch.show", compact("course", "studentResearch"));
     }
 
@@ -170,7 +170,7 @@ class MyResearchController extends Controller
      */
     public function destroy(StudentResearch $studentresearch)
     {
-         
+
         try {
             notify(__('remove studentresearch'), __('remove studentresearch') . " " . $studentresearch->name, "fa fa-bank");
             $studentresearch->delete();
